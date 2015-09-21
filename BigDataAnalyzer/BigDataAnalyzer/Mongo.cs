@@ -16,12 +16,18 @@ namespace BigDataAnalyzer
         IMongoCollection<BsonDocument> collection;
         public Mongo(string servername = "localhost", int portNumber = 27017)
         {
-             connectionString = "mongodb://" + servername + ":" + portNumber.ToString();
-             client = new MongoClient(connectionString);
-
-            //MongoServer server = client.GetServer();
-            var database = client.GetDatabase("foo");
-            collection = database.GetCollection<BsonDocument>("foo");
+            try
+            {
+                connectionString = "mongodb://" + servername + ":" + portNumber.ToString();
+                client = new MongoClient(connectionString);
+                var database = client.GetDatabase("foo");
+                collection = database.GetCollection<BsonDocument>("foo");
+            }
+            catch(MongoException ex)
+            {
+                Console.WriteLine("Failed to bind DB", ex.Message);
+                throw;
+            }
         }
 
         public async Task Find()
